@@ -4,7 +4,7 @@ const xml2js = require('xml2js');
 // create a server object
 const server = http.createServer((req, res) => {
   // set the response header
-  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Type', 'text/html');
   
   // handle only POST requests
   if (req.method === 'POST') {
@@ -20,7 +20,8 @@ const server = http.createServer((req, res) => {
           console.error(err);
           res.end('Error parsing XML data');
         } else {
-          res.end(result);
+          const html = `<html><body><h1>XML Data</h1><pre>${JSON.stringify(result, null, 2)}</pre></body></html>`;
+          res.end(html);
         }
       });
     });
