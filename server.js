@@ -24,6 +24,7 @@ const server = http.createServer((req, res) => {
             <p>Parsed XML:</p>
             <pre>${JSON.stringify(result, null, 2)}</pre>
           `;
+          console.log(responseHtml);
           res.end(responseHtml);
         }
       });
