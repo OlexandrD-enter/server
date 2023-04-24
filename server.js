@@ -36,6 +36,7 @@ const server = http.createServer((req, res) => {
    
   `;
     res.end(responseHtml);
+    data = '';
   } else {
     res.statusCode = 404;
     res.end("Not found");
