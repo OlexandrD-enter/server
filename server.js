@@ -1,36 +1,38 @@
 const http = require('http');
 const xml2js = require('xml2js');
 
-// create a server object
 const server = http.createServer((req, res) => {
-  // set the response header
   res.setHeader('Content-Type', 'text/html');
-  
-  // handle only POST requests
+
   if (req.method === 'POST') {
     let data = '';
     req.on('data', chunk => {
       data += chunk;
     });
     req.on('end', () => {
-      // parse the XML data using xml2js
       const parser = new xml2js.Parser();
       parser.parseString(data, (err, result) => {
         if (err) {
           console.error(err);
-          res.end('Error parsing XML data');
+          res.end(`<h1>Error parsing XML data</h1><p>${err.message}</p>`);
         } else {
-          const html = `<html><body><h1>XML Data</h1><pre>${JSON.stringify(result, null, 2)}</pre></body></html>`;
-          res.end(html);
+          console.log(result);
+          const responseHtml = `
+            <h1>Request Received</h1>
+            <p>Request body:</p>
+            <pre>${data}</pre>
+            <p>Parsed XML:</p>
+            <pre>${JSON.stringify(result, null, 2)}</pre>
+          `;
+          res.end(responseHtml);
         }
       });
     });
   } else {
-    res.end('This server only accepts POST requests');
+    res.end('<h1>This server only accepts POST requests</h1>');
   }
 });
 
-// listen on port 3000
 server.listen(3000, () => {
   console.log('Server started on port 3000');
 });
