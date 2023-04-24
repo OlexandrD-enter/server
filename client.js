@@ -11,4 +11,10 @@ xhr.onreadystatechange = function() {
     responseDiv.innerHTML = xhr.response;*/
   }
 };
-xhr.send(xmlData);
+
+xhr.onload = function() {
+  if (xhr.status === 302) {
+    window.location.reload();
+  }
+};
+xhr.send(JSON.stringify(data));

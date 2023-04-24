@@ -1,39 +1,47 @@
-const http = require('http');
-const xml2js = require('xml2js');
+const http = require("http");
+const xml2js = require("xml2js");
 
+const parser = new xml2js.Parser({});
+let data = "";
 const server = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-
-  if (req.method === 'POST') {
-    let data = '';
-    req.on('data', chunk => {
+  if (req.method === "POST") {
+    req.on("data", (chunk) => {
       data += chunk;
     });
-    req.on('end', () => {
-      const parser = new xml2js.Parser();
-      parser.parseString(data, (err, result) => {
+    req.on("end", () => {
+      parser.parseString(data, (err, parsedData) => {
         if (err) {
           console.error(err);
-          res.end(`<h1>Error parsing XML data</h1><p>${err.message}</p>`);
+          res.statusCode = 500;
+          res.end("Internal server error");
         } else {
-          console.log(result);
-          const responseHtml = `
-            <h1>Request Received</h1>
-            <p>Request body:</p>
-            <pre>${data}</pre>
-            <p>Parsed XML:</p>
-            <pre>${JSON.stringify(result, null, 2)}</pre>
-          `;
-          console.log(responseHtml);
-          res.end(responseHtml);
+          // process the parsedData as required
+          console.log(parsedData);
+          res.setHeader("Content-Type", "text/plain");
+          res.statusCode = 200;
+          res.end("Data received and processed successfully");
         }
       });
     });
+  } else if (req.method === "GET") {
+    // retrieve the data from the data store or database and convert it to XML
+    const builder = new xml2js.Builder({
+      headless: true
+    });
+    const xmlData = builder.buildObject(data);
+    const responseHtml = `
+    <h1>Request Received</h1>
+    <p>Request body:</p>
+    <pre>${xmlData}</pre>
+   
+  `;
+    res.end(responseHtml);
   } else {
-    res.end('<h1>This server only accepts POST requests</h1>');
+    res.statusCode = 404;
+    res.end("Not found");
   }
 });
 
 server.listen(3000, () => {
-  console.log('Server started on port 3000');
+  console.log("Server started on port 3000");
 });
