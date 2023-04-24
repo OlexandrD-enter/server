@@ -20,7 +20,6 @@ const server = http.createServer((req, res) => {
           console.error(err);
           res.end('Error parsing XML data');
         } else {
-          res.end('XML data received and parsed');
           res.end(result);
         }
       });
